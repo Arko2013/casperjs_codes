@@ -8,10 +8,10 @@
 // Begin Tests 
 
 
-casper.test.begin("Test case_2.1.1", 10, function suite(test) {
+casper.test.begin("Test case_2.1.1", 4, function suite(test) {
 	var x= require('casper').selectXPath;
     casper.start('http://127.0.0.1:8080/main.html', function() {
-    	this.wait(2000);
+        this.wait(2000);
 		siteName=this.getTitle();
 		this.wait(2000);
 		this.test.assertTitle(
