@@ -43,13 +43,22 @@ casper.test.begin("tc_6.1.2", 2 , function suite(test) {
  casper.thenClick(x('/html/body/div[3]/div/div[4]/div/div/div[2]/div[3]/div[2]/div/div/div/div[2]/input'), function(){
     this.wait(2000);
 	//this.test.assertTextExists(x('/html/body/div[3]/div/div[4]/div/div/div[2]/div[3]/div[2]/div/div/div/div/div/div[2]'),'hello there');
-	var msg=casper.fetchText(x('/html/body/div[3]/div/div[4]/div/div/div[2]/div[3]/div[2]/div/div/div/div/div/div[2]'));
+	
+	//the variable "cmt" contains the text passed as comment
+	var cmt=casper.fetchText(x('/html/body/div[3]/div/div[4]/div/div/div[2]/div[3]/div[2]/div/div/div/div/div/div[2]'));
 	this.echo(casper.fetchText(x('/html/body/div[3]/div/div[4]/div/div/div[2]/div[3]/div[2]/div/div/div/div/div/div[2]')));
-	 var abc = casper.fetchText(x('/html/body/div[3]/div/div[4]/div/div/div[2]/div[3]/div/a/span'));
-	 	 this.echo(abc);
+	//the variable "count" contains the text which shows how many comments have been made
+	var count= casper.fetchText(x('/html/body/div[3]/div/div[4]/div/div/div[2]/div[3]/div/a/span'));
+	this.echo(count);
 	console.log('Comments entered');
 	
-});//ends	
+});//ends
+
+ /*casper.on('remote.message', function() {
+	var abc = casper.fetchText(x('/html/body/div[3]/div/div[4]/div/div/div[2]/div[3]/div/a/span'));
+	var msg=casper.fetchText(x('/html/body/div[3]/div/div[4]/div/div/div[2]/div[3]/div[2]/div/div/div/div/div/div[2]')); 
+    this.echo('remote message caught: ' + msg);
+})	*/
 		
     casper.run(function() {
         test.done();
