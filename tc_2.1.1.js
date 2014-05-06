@@ -23,7 +23,7 @@ casper.test.begin("Test case_2.1.1", 4, function suite(test) {
 	casper.then(function() {
 		this.test.assertExists(
     {type: 'xpath', path: '/html/body/div[2]/div/div[2]/ul[2]/li[3]/a' },
-    'Logout option exits');
+    'Logout feature exits');
         
 });
     
