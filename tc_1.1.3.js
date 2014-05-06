@@ -12,7 +12,7 @@
 casper.test.begin("Github Authentication Test Suite", 6, function suite(test) {
     casper.start('http://github.com/login', function() {
         
-        test.assertTitleMatch(/Sign in*/, 'Github login page has the correct title');   
+        test.assertTitleMatch(/Sign in*/, 'Github login Page has the correct title');   
         test.assertTextExists('Username or Email', "Page contails Username or Email text");
         test.assertExists('#login_field', 'Username field exists'); // Check if Username Field exists
         test.assertExists('#password', 'Password field exists'); // Check if Password field exists
