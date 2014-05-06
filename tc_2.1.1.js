@@ -10,36 +10,8 @@
 
 casper.test.begin("Test case_2.1.1", 10, function suite(test) {
 	var x= require('casper').selectXPath;
-    casper.start('http://github.com/login', function() {
-        
-        test.assertTitleMatch(/Sign in*/, 'Github login page has the correct title');   
-        test.assertTextExists('Username or Email', "Page contails Username or Email text");
-        test.assertExists('#login_field', 'Username field exists'); // Check if Username Field exists
-        test.assertExists('#password', 'Password field exists'); // Check if Password field exists
-    
-     
-    
-    });//start ends
-    
-    casper.then(function() {
-        
-        console.log("Login into GitHub with supplied username and password");
-        this.sendKeys('#login_field', 'Arko2013');
-        this.sendKeys('#password','bazinga50@');
-            
-    });
-    
-    casper.then(function() {
-        this.click({type: 'css', path: '#login > form > div.auth-form-body > input.button'});
-    });
-    
-    casper.then(function() {
-        test.assertTitleMatch(/GitHub/, "Github page has been loaded");
-        test.assertTextExists('Arko2013', "Arko2013 home page loaded");
-    });
-    
-    casper.thenOpen('http://127.0.0.1:8080/main.html?notebook=53ff63418f1c2e5c373a', function() {
-		this.wait(2000);
+    casper.start('http://127.0.0.1:8080/main.html', function() {
+    	this.wait(2000);
 		siteName=this.getTitle();
 		this.wait(2000);
 		this.test.assertTitle(
