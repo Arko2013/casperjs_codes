@@ -1,7 +1,7 @@
 /* 
     Author: Arko
-    Description:    This is a casperjs automated test script To write a comment for the currently loaded notebook in the comment div provided in the 
-                    right-side of the page
+    Description:    This is a casperjs automated test script showing that executing an invalid R command following a '?' in any cell
+                    (R/Markdown/Prompt) will not display the description of the particular code in Help div. It will produce an error
                     
     
 */
@@ -9,7 +9,7 @@
 //Begin Tests
 
 
-casper.test.begin("Comment for a notebook", 1, function suite(test) {
+casper.test.begin("Invalid R command in Help div", 2, function suite(test) {
 	    
     var x= require('casper').selectXPath;
     var github_username = casper.cli.options.username;
@@ -44,30 +44,39 @@ casper.test.begin("Comment for a notebook", 1, function suite(test) {
 			'the element Shareable Link exists'
 			);
 		});
+		
+		
 	casper.viewport(1366,768).then(function() {
-		if(this.visible('#comments-wrapper'))
+		if(this.visible('#help-form'))
 		{
-			this.echo('Comment div is open');
+			this.echo('Help div is open');
 			this.wait(5000);
 			
 		}
 		else
 		{
-			this.echo('Comment div is not open,hence opening it');
+			this.echo('Help div is not open,hence opening it');
 			this.wait(5000);
-			this.click(x('/html/body/div[3]/div/div[4]/div/div/div[2]/div[3]/div/a/div/i'));
+			this.click(x('/html/body/div[3]/div/div/div[2]/div/div/div[3]/div/a/i'));
 			this.wait(5000);
 		}
-		this.sendKeys('#comment-entry-body',comment);
+		this.sendKeys('#input-text-help',comment);
 		this.wait(6000);
-		if(this.click(x('/html/body/div[3]/div/div[4]/div/div/div[2]/div[3]/div[2]/div/div/div/div[2]/input')))
+		if(this.click(x('/html/body/div[3]/div/div/div[2]/div/div/div[3]/div[2]/div/div/form/div/button')))
 		{
-			this.echo('comment entered successfully');
+			this.echo('topic for help entered successfully');
 		}
 		else
 		{
-			this.echo('could not enter comment');
+			this.echo('could not enter help content');
 		}
+		this.wait(10000);
+	});
+
+	casper.then(function() {
+		console.log('validating then no documentation is displayed for the incorrect R command entered');
+		this.test.assertTextExists('No documentation for','confirms that Help content is not displayed');
+		
 	});
     
     

@@ -1,18 +1,15 @@
 /*
 
 Author: Kunal
-Description:This is a casperjs automation script for notebook containing more than one R cell with some code which is already executed and 
-            Run all button is then clicked and checked wheather all the R cells are executed or no.
-
+Description:This is a casperjs automation script for The checkbox for "show source" is selected for showing the source code when a notebook is executed
 */
-casper.test.begin("Execute pre executed R cell", 3, function suite(test) {
+casper.test.begin("Show source Checkbox selected", 5, function suite(test) {
     
     var x= require('casper').selectXPath;
     var github_username = casper.cli.options.username;
     var github_password = casper.cli.options.password;
     var rcloud_url = casper.cli.options.url;
-    //var r_code = casper.cli.options.code;
-    
+    var r_code = casper.cli.options.code;
     casper.start(rcloud_url, function() {
         
         
@@ -39,7 +36,7 @@ casper.test.begin("Execute pre executed R cell", 3, function suite(test) {
         else
             
         {
-            casper.then(function() {
+            casper.viewport(1366,768).then(function() {
                test.assertTitleMatch(/RCloud/, 'Rcloud Home page loaded');
             });
         }
@@ -55,11 +52,13 @@ casper.test.begin("Execute pre executed R cell", 3, function suite(test) {
 			);
 		});
 		
+		casper.wait(5000);
+		
 	//Creating a New notebook
 	
 	casper.viewport(1366,768).then(function(){
 		this.thenClick({type:'xpath',path:'/html/body/div[3]/div/div/div[2]/div/div/div/div/a[2]/i'});
-		this.wait(5000);
+		this.wait(7000);
 		console.log('New notebook is created');
 	});
 		
@@ -67,6 +66,7 @@ casper.test.begin("Execute pre executed R cell", 3, function suite(test) {
 	
 	casper.viewport(1366,768).then(function() {
 		this.click({type:'xpath', path: '/html/body/div[3]/div/div[3]/div/div[3]/div/div/table/tbody/tr/td/span/i'});
+		this.wait(5000);
 		console.log('Added a new cell');
 	});
 	
@@ -74,52 +74,61 @@ casper.test.begin("Execute pre executed R cell", 3, function suite(test) {
 	
 	casper.viewport(1366,768).then(function(){
 		this.sendKeys('div.ace-chrome:nth-child(1) > textarea:nth-child(1)','rnorm(10)');
-		//this.thenClick({type:'xpath', path: '/html/body/div[3]/div/div[3]/div/div/div/div/div/table/td/span/i'});
+		this.wait(5000);
 		if(this.thenClick({type:'xpath', path: '/html/body/div[3]/div/div[3]/div/div/div/div/div/table/td/span/i'}))
 		{
-			console.log('Executed the contents of the first R cell');
+			this.wait(5000);
+			console.log('Executed the contents of the cell');
 		}
 		else
 		{
-			console.log('failed to execute the contents of the cell');
-		}
-			
-		this.wait(5000);
-		//console.log('Executed the contents of the cell');
+		console.log('Contents of the cell not executed');	
+	}
 	});
 	
-	// Add another R cell
-	
-	casper.viewport(1366,768).then(function() {
-		this.click({type:'xpath', path: '/html/body/div[3]/div/div[3]/div/div[3]/div/div/table/tbody/tr/td/span/i'});
-		console.log('Added one more R cell');
-	});
-	
-	//Add contents to this cell and then execute it using run option
+	//Now clicking on the advanced div
 	
 	casper.viewport(1366,768).then(function(){
-		this.sendKeys('div.ace-chrome:nth-child(1) > textarea:nth-child(1)','rnorm(5)');
-		//this.thenClick({type:'xpath', path: '/html/body/div[3]/div/div[3]/div/div/div/div/div/table/td/span/i'});
-		if(this.thenClick({type:'xpath', path: '/html/body/div[3]/div/div[3]/div/div/div/div/div/table/td/span/i'}))
+		
+		this.wait(5000);
+		if(this.thenClick({type:'xpath', path: '/html/body/div[2]/div/div[2]/ul[2]/li/a/b'}))
 		{
-			this.echo('Executed the contents of the second R cell');
+			this.wait(5000);
+			console.log('Advanced dropdown selected');
 		}
 		else
-		{
-			this.echo('failed to execute contents of the R cell');
-		}
-		this.wait(5000);
-		//console.log('Executed the contents of the second R cell');
+		{	
+		console.log('Advanced dropdown not selected selected');
+	}
 	});
 	
-	//Now clicking on run all option
+	//Now checking whether show source is selected or no
 	
 	casper.viewport(1366,768).then(function(){
-		this.thenClick({type:'xpath', path: '/html/body/div[2]/div/div[2]/ul/li[5]/button'});
+		this.waitForSelector({type: 'css', path: 'html body div.navbar div div.nav-collapse ul.nav li.dropdown ul.dropdown-menu li a#show-source'});
+        console.log("Link for show source found.Checking its state");
 		this.wait(5000);
-		console.log('Run-all button is clicked to execute the pre-executed R cell');
+		this.test.assertExists({type:'css', path: 'html body div.navbar div div.nav-collapse ul.nav li.dropdown ul#advanced-menu.dropdown-menu li a#show-source i.icon-check'},
+		'Show source already selected');
+		
 	});
 	
+	//Clicking on the Run-all option
+	
+	casper.viewport(1366,768).then(function(){
+		this.wait(5000);
+		this.thenClick({type:'css', path: 'html body div.navbar div div.nav-collapse ul.nav li button#run-notebook.btn'},
+		'Run-all option clicked');
+		this.wait(5000);
+	});
+	   
+	 //Checking whether source code is present or just the output
+	 
+	 casper.viewport(1366,768).then(function(){
+		this.wait(10000);
+		this.test.assertExists({type:'xpath',path: '/html/body/div[3]/div/div[3]/div/div/div/div[3]/div[2]/pre/code'},
+								'Source code is also present along with outputs');
+	});
 	   
     casper.run(function() {
         test.done();

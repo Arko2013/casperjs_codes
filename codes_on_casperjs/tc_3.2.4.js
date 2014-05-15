@@ -22,7 +22,7 @@ casper.test.begin("Open Notebook In Github after Forking", 10, function suite(te
     });
     
    
-    casper.then(function() {
+    casper.viewport(1366,768).then(function() {
        test.assertTitleMatch(/GitHub/, "Github page has been loaded"); 
        console.log("Login into GitHub with supplied username and password");
         //test.assertTitleMatch(/login*/,'login page has the correct title');
@@ -31,7 +31,7 @@ casper.test.begin("Open Notebook In Github after Forking", 10, function suite(te
         this.click({type: 'css', path: '#login > form > div.auth-form-body > input.button'});
     });
     
-    casper.then(function() {
+    casper.viewport(1366,768).then(function() {
         if (this.getTitle().match(/GitHub/)) 
         {
         
@@ -42,7 +42,7 @@ casper.test.begin("Open Notebook In Github after Forking", 10, function suite(te
         else
             
         {
-            casper.then(function() {
+            casper.viewport(1366,768).then(function() {
                test.assertTitleMatch(/RCloud/, 'Rcloud Home page loaded');
             });
         }
@@ -51,19 +51,19 @@ casper.test.begin("Open Notebook In Github after Forking", 10, function suite(te
 	casper.wait(7000);
     //Validation to check if RCloud main page has loaded properly. We are checking if Shareable Link is visible. Similarly other 
     //icons can also be checked
-    casper.then(function() {
+    casper.viewport(1366,768).then(function() {
 		this.test.assertExists(
 			{type: 'xpath', path: '/html/body/div[2]/div/div[2]/ul/li/span/a' },
 			'the element Shareable Link exists'
 			);
 		});
     
-    casper.thenOpen('http://127.0.0.1:8080/view.html?notebook='+notebook_id,function() {
+    casper.viewport(1366,768).thenOpen('http://127.0.0.1:8080/view.html?notebook='+notebook_id,function() {
 		this.wait(7000);
 		this.echo(this.getCurrentUrl());
 	});
 	
-	casper.then(function() {
+	casper.viewport(1366,768).then(function() {
 		this.test.assertUrlMatch(/view.html/, 'view.html page for given user loaded');
         //verify that only output div is visible and editable icon exists which proves that the notebook is currently not in Editable
         //form
@@ -71,12 +71,12 @@ casper.test.begin("Open Notebook In Github after Forking", 10, function suite(te
         this.test.assertVisible(x('/html/body/div[2]/div/div[2]/ul/li/button'),'proves that notebook currently is uneditable');
     });
     
-    casper.then(function() {
+    casper.viewport(1366,768).then(function() {
 		this.click(x('/html/body/div[2]/div/div[2]/ul/li/button'),'edit button clicked');
 		this.wait(7000);
 	});
 	
-	casper.then(function() {
+	casper.viewport(1366,768).then(function() {
 		this.test.assertUrlMatch(/main.html/, 'RCloud main page for given user loaded');
 		this.echo(this.getCurrentUrl());
 		var current_name=this.fetchText(x('/html/body/div[2]/div/div[2]/ul/li[6]/a/span'));
@@ -89,7 +89,7 @@ casper.test.begin("Open Notebook In Github after Forking", 10, function suite(te
 	});
 	
 	//fork the notebook
-	casper.then(function() {
+	casper.viewport(1366,768).then(function() {
 		this.test.assertExists(x('/html/body/div[2]/div/div[2]/ul/li[2]/a'),'Fork option exists');
 		this.click(x('/html/body/div[2]/div/div[2]/ul/li[2]/a'),'Fork option clicked');
 		this.wait(9000);
@@ -97,13 +97,13 @@ casper.test.begin("Open Notebook In Github after Forking", 10, function suite(te
     
     
     //open the notebook in Github 
-    casper.then(function() {
+    casper.viewport(1366,768).then(function() {
 		this.click(x('/html/body/div[2]/div/div[2]/ul[2]/li/a/b'),'Advanced div opened');
 		this.wait(6000);
 		
 	});
 	
-	casper.then(function() {
+	casper.viewport(1366,768).then(function() {
 		
         this.waitForSelector({type: 'css', path: 'html body div.navbar div div.nav-collapse ul.nav li.dropdown ul.dropdown-menu li a#open-in-github'}, function() {
             console.log("Link for opening notebook in github found. Clicking on it");
@@ -118,7 +118,7 @@ casper.test.begin("Open Notebook In Github after Forking", 10, function suite(te
                     });
             this.wait(11000); 
             
-            this.withPopup(/gist.github.com/, function() {
+            this.viewport(1366,768).withPopup(/gist.github.com/, function() {
 				     this.wait(4000);
 			         console.log(this.getCurrentUrl());
 			         this.test.assertUrlMatch(/gist.github.com*/, 'Notebook opened in github');

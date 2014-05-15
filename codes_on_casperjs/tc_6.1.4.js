@@ -1,7 +1,7 @@
 /* 
     Author: Arko
-    Description:    This is a casperjs automated test script To write a comment for the currently loaded notebook in the comment div provided in the 
-                    right-side of the page
+    Description:    This is a casperjs automated test script for showing that the total number of comments can be checked at any instant can be checked
+					by getting the count from "<number of comments> Comments" text area
                     
     
 */
@@ -9,7 +9,7 @@
 //Begin Tests
 
 
-casper.test.begin("Comment for a notebook", 1, function suite(test) {
+casper.test.begin(" Total number of comments", 1, function suite(test) {
 	    
     var x= require('casper').selectXPath;
     var github_username = casper.cli.options.username;
@@ -45,6 +45,9 @@ casper.test.begin("Comment for a notebook", 1, function suite(test) {
 			);
 		});
 	casper.viewport(1366,768).then(function() {
+		var count=this.fetchText(x('/html/body/div[3]/div/div[4]/div/div/div[2]/div[3]/div/a/span/span'));
+		this.echo('Total number of comments at this instant is :');
+		this.echo(count);
 		if(this.visible('#comments-wrapper'))
 		{
 			this.echo('Comment div is open');
@@ -68,7 +71,17 @@ casper.test.begin("Comment for a notebook", 1, function suite(test) {
 		{
 			this.echo('could not enter comment');
 		}
+		this.wait(10000);
+		casper.then(function() {
+			this.echo('Total number of comments at this instant is :');
+			var new_count=this.fetchText(x('/html/body/div[3]/div/div[4]/div/div/div[2]/div[3]/div/a/span/span'));
+			this.echo(new_count);
+			//this.test.assertNotEquals(new_count,count,'there is increment in number of comments');
+		});
+		
 	});
+	
+	
     
     
     casper.run(function() {

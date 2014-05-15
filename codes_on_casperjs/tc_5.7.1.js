@@ -8,7 +8,7 @@
 
 //Begin Tests
 
-casper.test.begin(" History links", 3, function suite(test) {
+casper.test.begin(" History links", 4, function suite(test) {
 	    
     var x= require('casper').selectXPath;
     var github_username = casper.cli.options.username;
@@ -97,10 +97,13 @@ casper.test.begin(" History links", 3, function suite(test) {
 		  this.wait(7000);
 		  this.test.assertExists(x('/html/body/div[3]/div/div/div[2]/div/div/div/div[2]/div/div/ul/li/ul/li/ul/li/ul/li/div/span'),'history links present');
 	});
-	  
+	
+	//test.renderResults(true, 0, 'test-results.xml');  
 		   
     casper.run(function() {
         test.done();
     });
+    
+    
 
 });

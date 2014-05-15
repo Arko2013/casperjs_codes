@@ -1,12 +1,14 @@
 /* 
     Author: Arko
-    Description:    This is a casperjs automated test script for showing that When a notebook belonging to some different user is loaded and not forked, 
-                    the gist of notebook can be opened in Github by the current user although in the different user's repository
+    Description:    This is a casperjs automated test script for showing that When a notebook belonging to some different user 
+                    is loaded and forked,a new notebook having the same name gets added to the list of existing notebooks for the current user.
+                    The gist of notebook can then be opened in Github by selecting the link for "Open in Github" under the Advanced drop-down link 
+                    present on the top-right corner of the page
 */
 
 //Begin Tests
 
-casper.test.begin(" Loaded Notebook of some different user (not forked)", 6, function suite(test) {
+casper.test.begin(" Loaded Notebook of some different user (after the Notebook is forked)", 6, function suite(test) {
     
     var x= require('casper').selectXPath;
     var github_username = casper.cli.options.username;
@@ -22,7 +24,7 @@ casper.test.begin(" Loaded Notebook of some different user (not forked)", 6, fun
     });
     
    
-    casper.viewport(1366,768).then(function() {
+    casper.then(function() {
        test.assertTitleMatch(/GitHub/, "Github page has been loaded"); 
        console.log("Login into GitHub with supplied username and password");
         //test.assertTitleMatch(/login*/,'login page has the correct title');
@@ -31,7 +33,7 @@ casper.test.begin(" Loaded Notebook of some different user (not forked)", 6, fun
         this.click({type: 'css', path: '#login > form > div.auth-form-body > input.button'});
     });
     
-    casper.viewport(1366,768).then(function() {
+    casper.then(function() {
         if (this.getTitle().match(/GitHub/)) 
         {
         
@@ -50,7 +52,7 @@ casper.test.begin(" Loaded Notebook of some different user (not forked)", 6, fun
 	
 	casper.wait(7000);
     
-    casper.viewport(1366,768).then(function() {
+    casper.then(function() {
 		this.test.assertExists(
 			{type: 'xpath', path: '/html/body/div[2]/div/div[2]/ul/li/span/a' },
 			'the element Shareable Link exists'
@@ -58,19 +60,26 @@ casper.test.begin(" Loaded Notebook of some different user (not forked)", 6, fun
 		});
 	
 	//open notebook belonging to some different user
-	casper.viewport(1366,768).thenOpen('http://127.0.0.1:8080/main.html?notebook='+notebook_id,function() {
+	casper.thenOpen('http://127.0.0.1:8080/main.html?notebook='+notebook_id,function() {
 		this.wait(8000);
 		this.echo(this.getCurrentUrl());
 	});
+	
+	//forking the notebook
+	casper.then(function() {
+		this.click(x('/html/body/div[2]/div/div[2]/ul/li[2]/a'),'Fork option clicked');
+		this.wait(8000);
+		
+	});
     
     //open the Advanced Dropdown
-    casper.viewport(1366,768).then(function() {
-		this.click(x('/html/body/div[2]/div/div[2]/ul[2]/li/a/b'),'Advanced dropdown opened');
-		this.wait(8000);
+    casper.then(function() {
+		this.click(x('/html/body/div[2]/div/div[2]/ul/li[2]/a'));
+		this.wait(5000);
 	});
     //open the notebook in Github 
     	
-	casper.viewport(1366,768).then(function() {
+	casper.then(function() {
 		
         this.waitForSelector({type: 'css', path: 'html body div.navbar div div.nav-collapse ul.nav li.dropdown ul#advanced-menu.dropdown-menu li a#open-in-github'}, function() {
             console.log("Link for opening notebook in github found. Clicking on it");
@@ -85,12 +94,12 @@ casper.test.begin(" Loaded Notebook of some different user (not forked)", 6, fun
                     });
             this.wait(11000); 
             
-            this.viewport(1366,768).withPopup(/gist.github.com/, function() {
+            this.withPopup(/gist.github.com/, function() {
 				     this.wait(4000);
 			         console.log(this.getCurrentUrl());
 			         this.test.assertUrlMatch(/gist.github.com*/, 'Notebook opened in github');
 			         //verifying that the gist opened belongs to local user
-			         this.wait(10000);
+			         this.wait(8000);
 			         var gist_user=this.fetchText(x('/html/body/div/div[2]/div/div/div/div/h1/div/div/span/span/a'));
 			         this.echo(gist_user);
 			         this.echo(user);

@@ -1,7 +1,7 @@
 /* 
     Author: Arko
-    Description:    This is a casperjs automated test script To write a comment for the currently loaded notebook in the comment div provided in the 
-                    right-side of the page
+    Description:    This is a casperjs automated test script for showing that When a comment is added in the box present in the right-side of the page, the count for comments gets 
+                    incremented by 1
                     
     
 */
@@ -9,7 +9,7 @@
 //Begin Tests
 
 
-casper.test.begin("Comment for a notebook", 1, function suite(test) {
+casper.test.begin(" Increment in count of comments", 2, function suite(test) {
 	    
     var x= require('casper').selectXPath;
     var github_username = casper.cli.options.username;
@@ -45,6 +45,9 @@ casper.test.begin("Comment for a notebook", 1, function suite(test) {
 			);
 		});
 	casper.viewport(1366,768).then(function() {
+		var count=this.fetchText(x('/html/body/div[3]/div/div[4]/div/div/div[2]/div[3]/div/a/span/span'));
+		this.echo('Initial number of comments is :');
+		this.echo(count);
 		if(this.visible('#comments-wrapper'))
 		{
 			this.echo('Comment div is open');
@@ -68,7 +71,17 @@ casper.test.begin("Comment for a notebook", 1, function suite(test) {
 		{
 			this.echo('could not enter comment');
 		}
+		this.wait(10000);
+		casper.then(function() {
+			this.echo('Final number of comments is :');
+			var new_count=this.fetchText(x('/html/body/div[3]/div/div[4]/div/div/div[2]/div[3]/div/a/span/span'));
+			this.echo(new_count);
+			this.test.assertNotEquals(new_count,count,'there is increment in number of comments');
+		});
+		
 	});
+	
+	
     
     
     casper.run(function() {

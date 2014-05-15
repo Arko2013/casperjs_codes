@@ -20,7 +20,7 @@ casper.test.begin("Shareable Link", 5, function suite(test) {
     });
     
    
-    casper.then(function() {
+    casper.viewport(1366,768).then(function() {
        test.assertTitleMatch(/GitHub/, "Github page has been loaded"); 
        console.log("Login into GitHub with supplied username and password");
         //test.assertTitleMatch(/login*/,'login page has the correct title');
@@ -29,7 +29,7 @@ casper.test.begin("Shareable Link", 5, function suite(test) {
         this.click({type: 'css', path: '#login > form > div.auth-form-body > input.button'});
     });
     
-    casper.then(function() {
+    casper.viewport(1366,768).then(function() {
         if (this.getTitle().match(/GitHub/)) 
         {
         
@@ -40,13 +40,13 @@ casper.test.begin("Shareable Link", 5, function suite(test) {
         else
             
         {
-            casper.then(function() {
+            casper.viewport(1366,768).then(function() {
                test.assertTitleMatch(/RCloud/, 'Rcloud Home page loaded');
             });
         }
 	});
     
-    casper.then(function() {
+    casper.viewport(1366,768).then(function() {
 	this.wait(3000);
         this.waitForSelector({type: 'css', path: 'html body div.navbar div div.nav-collapse ul.nav li span a#share-link.btn'}, function() {
             console.log("Shareable link found. Clicking on it");
@@ -54,15 +54,15 @@ casper.test.begin("Shareable Link", 5, function suite(test) {
             if (this.click({type: 'css', path: 'html body div.navbar div div.nav-collapse ul.nav li span a#share-link.btn'}))
             {
                 
-                //casper.then(function() {
+                
                     this.wait(3000);
-                    this.waitForPopup(/view\.html/, function() {
+                    this.viewport(1366,768).waitForPopup(/view\.html/, function() {
                         this.test.assertEquals(this.popups.length, 1);
                                         
                     });
             this.wait(11000); 
             
-            this.withPopup(/view\.html/, function() {
+            this.viewport(1366,768).withPopup(/view\.html/, function() {
 			         console.log(this.getCurrentUrl());
 			         test.assertUrlMatch(/view.html*/, 'Got the shareable view');
 			         //verifying that the view.html page has git loaded properly by checking if the Edit icon is visible
@@ -77,7 +77,7 @@ casper.test.begin("Shareable Link", 5, function suite(test) {
 		   }
             else
             {
-                console.log("Sherable link could not be clicked");
+                console.log("Shareable link could not be clicked");
             }
         });
     });

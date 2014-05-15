@@ -1,14 +1,14 @@
 /* 
     Author: Kunal
-    Description:    This is a casperjs automated test script for clicking the "Edit Notebook" option, the respected notebook should open in the main.html page 
-					displaying only the source codes for the notebook.
+    Description:    This is a casperjs automated test script for After clicking on "Edit Notebook" option ,
+    				the main.html page opens and On clicking the "Run All" option present on top left corner
+					of the main.html page, all the cells should be executed.
                     
-    
 */
 
 //Begin Tests
 
-casper.test.begin("Make Notebook Editable", 5, function suite(test) {
+casper.test.begin("Run all the cells using 'Run All' option", 6, function suite(test) {
     
     var x= require('casper').selectXPath;
 	var github_username = casper.cli.options.username;
@@ -81,7 +81,7 @@ casper.test.begin("Make Notebook Editable", 5, function suite(test) {
             {
                     this.wait(7000);
                     this.waitForPopup(/view\.html/, function() {
-                        this.test.assertEquals(this.popups.length, 2);
+                        this.test.assertEquals(this.popups.length, 1);
                                         
                     });
 					this.wait(11000); 
@@ -90,7 +90,7 @@ casper.test.begin("Make Notebook Editable", 5, function suite(test) {
 						console.log(this.getCurrentUrl());
 						this.test.assertUrlMatch(/view.html*/, 'Got the shareable view');
 			         
-//verifying that the view.html page has git loaded properly by checking if the Edit icon is visible
+		//verifying that the view.html page has git loaded properly by checking if the Edit icon is visible
 			         
 						this.test.assertExists({type: 'xpath', path: '/html/body/div[2]/div/div[2]/ul/li/button/i' },
 							'the element Edit icon exists');
@@ -98,13 +98,20 @@ casper.test.begin("Make Notebook Editable", 5, function suite(test) {
 						this.thenClick({type: 'xpath', path: '/html/body/div[2]/div/div[2]/ul/li/button/i' },
 							'Clicking on edit button');
 						this.wait(16000);
-						//console.log(this.getCurrentUrl());
-						//this.test.assertUrlMatch(/main.html*/,'Got back to the main page');
 					});
 					casper.then(function() {
 						this.echo(this.getCurrentUrl());
 					});
-					
+
+		//Clicking on Run-all button
+		
+		casper.then(function() {			
+			this.test.assertExists({type:'xpath',path:'/html/body/div[2]/div/div[2]/ul/li[5]/button'},'Run-all button exists');
+			this.thenClick({type:'css', path: 'html body div.navbar div div.nav-collapse ul.nav li button#run-notebook.btn'});
+			this.wait(5000);
+			console.log('Run-all button is clicked to execute all the cells');
+			this.wait(10000);
+	});			
 			}
 
             else
