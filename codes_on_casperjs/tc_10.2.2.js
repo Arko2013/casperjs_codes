@@ -1,16 +1,16 @@
 /*
 
 Author: Kunal
-Description:This is a casperjs automation script for checking that after typing some code in the Prompt Cell of the loaded notebook. 
-			The content in the prompt stay as it is on reload.
+Description:This is a casperjs automation script for checking that after creating a new Rmarkdown cell in the loaded notebook and writing some code in it.
+			The content should automatically be saved after 30 seconds
 */
-casper.test.begin("Write some code in the Prompt Cell", 3, function suite(test) {
+casper.test.begin("New Rmarkdown cell (Not executed)", 3, function suite(test) {
     
     var x= require('casper').selectXPath;
     var github_username = casper.cli.options.username;
     var github_password = casper.cli.options.password;
-    var source_code = casper.cli.options.code;
     var rcloud_url = casper.cli.options.url;
+	var source_code = casper.cli.options.code;
     casper.start(rcloud_url, function() {
         
         
@@ -63,12 +63,59 @@ casper.test.begin("Write some code in the Prompt Cell", 3, function suite(test) 
 		console.log('New notebook is created');
 	});
 	
-	//Writing some code in command prompt
+	//Added a new cell
+	
+	casper.viewport(1366,768).then(function() {
+		if(this.click({type:'xpath', path: '/html/body/div[3]/div/div[3]/div/div[3]/div/div/table/tbody/tr/td/span/i'}))
+		{
+			
+			console.log('Added a new R cell');
+			this.wait(5000);
+		}
+		else
+		{
+			console.log('Could not create new R cell');
+		}
+	});
+	
+	
+	// Add a new markdown cell
+	
+	casper.viewport(1366,768).then(function() {
+		if(this.click({type:'xpath', path: '/html/body/div[3]/div/div[3]/div/div/div/div[2]/span[2]/i'}))
+		{
+		
+			console.log('Added a new R markdown cell');
+			this.wait(5000);
+		}
+		else
+		{
+			console.log('Could not create Markdown cell');
+		}
+	});
+	
+	//Deleting the R Cell
+	
+	casper.viewport(1366,768).then(function() {
+		this.click({type:'xpath', path: '/html/body/div[3]/div/div[3]/div/div/div[2]/div/div/table/td[6]/span/i'});
+		this.wait(5000);
+		console.log('Deleting the R cell so that the notebook has just one Markdown cell');
+	});
+	
+	
+	//Add contents to this cell and then execute it using run option
 	
 	casper.viewport(1366,768).then(function(){
-		this.sendKeys('#command-prompt',source_code);
-		this.wait(7000);
-		console.log('Code written in command prompt');
+		this.sendKeys('div.ace-chrome:nth-child(1) > textarea:nth-child(1)',source_code);
+		this.wait(5000);
+	});
+	
+	
+		
+	console.log('Waiting for 30 seconds to help auto-save work');
+	
+	casper.viewport(1366,768).then(function(){
+		this.wait(30000);
 	});
 	
 	//Reloading the page
@@ -76,9 +123,16 @@ casper.test.begin("Write some code in the Prompt Cell", 3, function suite(test) 
 	casper.viewport(1366,768).then(function(){
 		this.reload(function() {
         this.echo("Main Page loaded again");
-        this.wait(5000);
-    });
-		this.echo(this.fetchText('#command-prompt'));
+        this.wait(10000);
+		});
+    
+	});
+		
+	casper.viewport(1366,768).then(function(){
+		this.wait(15000);
+		//Checking the contents of the Rmarkdown cell
+		console.log('The contents of Markdown cell is :');
+		this.echo(this.fetchText(x('/html/body/div[3]/div/div/div/div/div/div[3]/div/div/div[2]/div/div[3]/div/div')));
 	});
 	
 	casper.run(function() {

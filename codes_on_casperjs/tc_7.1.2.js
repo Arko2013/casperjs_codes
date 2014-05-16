@@ -78,12 +78,12 @@ casper.test.begin(" Loaded Notebook of some different user (not forked)", 6, fun
             if (this.click(x('/html/body/div[2]/div/div[2]/ul[2]/li/ul/li/a')))
             {
                 
-                    this.wait(7000);
-                    this.waitForPopup(/gist.github.com/, function() {
+                    this.wait(10000);
+                    this.viewport(1366,768).waitForPopup(/gist.github.com/, function() {
                         this.test.assertEquals(this.popups.length, 1);
                                         
                     });
-            this.wait(11000); 
+            this.wait(15000); 
             
             this.viewport(1366,768).withPopup(/gist.github.com/, function() {
 				     this.wait(4000);

@@ -1,16 +1,17 @@
 /*
 
 Author: Kunal
-Description:This is a casperjs automation script for checking that after typing some code in the Prompt Cell of the loaded notebook. 
-			The content in the prompt stay as it is on reload.
+Description:This is a casperjs automation script for checking that the loaded notebook containing R cell which has been executed after
+			editing the content of that cell and it should be automatically saved after 30 seconds.
 */
-casper.test.begin("Write some code in the Prompt Cell", 3, function suite(test) {
+casper.test.begin("Edit R Cell (pre-executed)", 4, function suite(test) {
     
     var x= require('casper').selectXPath;
     var github_username = casper.cli.options.username;
     var github_password = casper.cli.options.password;
-    var source_code = casper.cli.options.code;
     var rcloud_url = casper.cli.options.url;
+    var source_code = casper.cli.options.code;
+    var edited_source_code = casper.cli.options.edit_code;
     casper.start(rcloud_url, function() {
         
         
@@ -63,12 +64,54 @@ casper.test.begin("Write some code in the Prompt Cell", 3, function suite(test) 
 		console.log('New notebook is created');
 	});
 	
-	//Writing some code in command prompt
+	//Added a new cell
+	
+	casper.viewport(1366,768).then(function() {
+		this.click({type:'xpath', path: '/html/body/div[3]/div/div[3]/div/div[3]/div/div/table/tbody/tr/td/span/i'});
+		this.wait(5000);
+		console.log('Added a new R cell');
+	});
+	
+	//Add contents to this cell and then execute it using run option
 	
 	casper.viewport(1366,768).then(function(){
-		this.sendKeys('#command-prompt',source_code);
-		this.wait(7000);
-		console.log('Code written in command prompt');
+		this.sendKeys('div.ace-chrome:nth-child(1) > textarea:nth-child(1)',source_code);
+		this.wait(5000);
+		if(this.thenClick({type:'xpath', path: '/html/body/div[3]/div/div[3]/div/div/div/div/div/table/td/span/i'}))
+		{
+			this.wait(5000);
+			console.log('Executed the contents of the R cell');
+		}
+		else
+		{
+		console.log('Contents of the cell not executed');	
+	}
+	});
+	
+	//Clicking on the Edit button to make changes to the earlier executed code
+	
+	casper.viewport(1366,768).then(function(){
+		if(this.thenClick({type:'xpath', path: '/html/body/div[3]/div/div[3]/div/div/div/div/div/table/td[2]/span/i'}))
+		{
+			console.log('Cell now in editable form');
+		}
+		else
+		{
+			console.log('Cell not editable');
+		}
+		this.wait(5000);
+	});
+	
+	//Editing the code
+	
+	casper.viewport(1366,768).then(function(){
+		this.sendKeys('div.ace-chrome:nth-child(1) > textarea:nth-child(1)',edited_source_code);
+	});
+		
+	//Waiting for 30 seconds to help auto-save work
+	
+	casper.viewport(1366,768).then(function(){
+		this.wait(30000);
 	});
 	
 	//Reloading the page
@@ -76,9 +119,17 @@ casper.test.begin("Write some code in the Prompt Cell", 3, function suite(test) 
 	casper.viewport(1366,768).then(function(){
 		this.reload(function() {
         this.echo("Main Page loaded again");
-        this.wait(5000);
+        this.wait(10000);
     });
-		this.echo(this.fetchText('#command-prompt'));
+    
+});
+		
+	casper.viewport(1366,768).then(function(){
+		this.wait(15000);
+		//Checking the R cell contents
+		var temp = this.fetchText(x('/html/body/div[3]/div/div/div/div/div/div[3]/div/div/div[2]/div/div[3]/div/div'));
+		this.echo(this.fetchText(x('/html/body/div[3]/div/div/div/div/div/div[3]/div/div/div[2]/div/div[3]/div/div')));
+		this.test.assertNotEquals(temp,source_code,"Code has been edited and edited codes have been saved");
 	});
 	
 	casper.run(function() {
