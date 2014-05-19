@@ -86,46 +86,49 @@ casper.test.begin("By default, Show Source is selected", 6, function suite(test)
                     });
 					this.wait(11000); 
             
-					this.viewport(1366,768).withPopup(/view\.html/, function() {
-						console.log(this.getCurrentUrl());
-						this.test.assertUrlMatch(/view.html*/, 'Got the shareable view');
+					this.withPopup(/view\.html/, function() {
+						casper.viewport(1366,768).then(function() {
+							console.log(this.getCurrentUrl());
+							this.test.assertUrlMatch(/view.html*/, 'Got the shareable view');
 			         
-		//verifying that the view.html page has git loaded properly by checking if the Edit icon is visible
+		//verifying that the view.html page has got loaded properly by checking if the Edit icon is visible
 			         
-						this.test.assertExists({type: 'xpath', path: '/html/body/div[2]/div/div[2]/ul/li/button/i' },
-							'the element Edit icon exists');
-						this.wait(2000);
-						this.thenClick({type: 'xpath', path: '/html/body/div[2]/div/div[2]/ul/li/button/i' },
-							'Clicking on edit button');
-						this.wait(16000);
-					});
+							this.test.assertExists({type: 'xpath', path: '/html/body/div[2]/div/div[2]/ul/li/button/i' },
+								'the element Edit icon exists');
+							this.wait(2000);
+							this.thenClick({type: 'xpath', path: '/html/body/div[2]/div/div[2]/ul/li/button/i' },
+								'Clicking on edit button');
+							this.wait(16000);
+						});
+					});//withPopup function ends
+					
 					casper.viewport(1366,768).then(function() {
 						this.echo(this.getCurrentUrl());
 					});
 
 		//Clicking on Advanced div again
 		
-		casper.viewport(1366,768).then(function() {			
-			this.click(x('/html/body/div[2]/div/div[2]/ul[2]/li/a/b'),'Advanced div opened');
-			this.wait(9000);
-	});
+					casper.viewport(1366,768).then(function() {			
+						this.click(x('/html/body/div[2]/div/div[2]/ul[2]/li/a/b'),'Advanced div opened');
+						this.wait(9000);
+					});
 	
 	//Checking whether show source is already clicked or no
 	
-		casper.viewport(1366,768).then(function() {
-			this.wait(10000);
-			this.waitForSelector({type: 'css', path: 'html body div.navbar div div.nav-collapse ul.nav li.dropdown ul#advanced-menu.dropdown-menu li a#show-source'});
-            console.log("Link for show source found.");
-			this.test.assertExists({type: 'css', path: 'html body div.navbar div div.nav-collapse ul.nav li.dropdown ul#advanced-menu.dropdown-menu li a#show-source i.icon-check'},'Checked that the show source is already selected');
-            this.wait(10000);
-		});			
-			}
+					casper.viewport(1366,768).then(function() {
+						this.wait(10000);
+						this.waitForSelector({type: 'css', path: 'html body div.navbar div div.nav-collapse ul.nav li.dropdown ul#advanced-menu.dropdown-menu li a#show-source'});
+						console.log("Link for show source found.");
+						this.test.assertExists({type: 'css', path: 'html body div.navbar div div.nav-collapse ul.nav li.dropdown ul#advanced-menu.dropdown-menu li a#show-source i.icon-check'},'Checked that the show source is already selected');
+						this.wait(10000);
+					});			
+			}//if ends
 
             else
             {
-                console.log("Shareable link could not be clicked");
+                console.log("Show source checkbox could not be clicked");
             }
-        });
+        });//waitforSelector function ends
     });
        
     casper.run(function() {
