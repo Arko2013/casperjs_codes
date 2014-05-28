@@ -29,7 +29,7 @@ casper.test.begin("Rcloud Authentication Tests", 1, function suite(test) {
     casper.viewport(1366,768).then(function() {
 		this.test.assertExists(
 			{type: 'xpath', path: '/html/body/div[2]/div/div[2]/ul/li/span/a' },
-			'the element Shareable Link exists'
+			'the Element Shareable Link exists'
 			);
 		});
     
