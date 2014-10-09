@@ -3,7 +3,6 @@
 #Run the Testsuites
 
 echo "Going to the folder which contains the automated test suites and test cases "
-cd ./automationtesting/TESTSUITES/ 
 
 echo "The following test suites are currently present:"
 echo "1)notebook_naming"
